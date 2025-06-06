@@ -59,6 +59,11 @@ io.on('connection', (socket) => {
     const otherUsers = rooms[roomID].filter(user => user.socketId !== socket.id);
     socket.emit('users-in-room', otherUsers);
     
+    // Also notify existing users about the new user joining
+    if (otherUsers.length > 0) {
+      socket.to(roomID).emit('users-in-room', [{id: userID, socketId: socket.id}]);
+    }
+    
     console.log(`Room ${roomID} now has ${rooms[roomID].length} users`);
   });
 
